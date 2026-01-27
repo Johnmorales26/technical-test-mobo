@@ -4,7 +4,7 @@ import 'package:mobo_field_reporter/features/reports/domain/usecases/create_repo
 import 'package:mobo_field_reporter/features/reports/domain/usecases/get_reports.dart';
 import 'package:mobo_field_reporter/features/reports/domain/usecases/usecase.dart';
 import 'package:mobo_field_reporter/features/reports/presentation/bloc/report_state.dart';
-import 'package:mobo_field_reporter/features/reports/presentation/report_event.dart';
+import 'package:mobo_field_reporter/features/reports/presentation/bloc/report_event.dart';
 
 @injectable
 class ReportBloc extends Bloc<ReportEvent, ReportState> {
