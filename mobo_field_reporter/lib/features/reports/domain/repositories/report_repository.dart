@@ -2,6 +2,8 @@ import 'package:dartz/dartz.dart';
 import 'package:mobo_field_reporter/core/errors/failures.dart';
 import 'package:mobo_field_reporter/features/reports/domain/entities/report.dart';
 
+import '../entities/evidence.dart';
+
 abstract class IReportRepository {
 
   Future<Either<Failure, List<Report>>> getReports();
@@ -17,4 +19,8 @@ abstract class IReportRepository {
 
 
   Future<Either<Failure, void>> deleteReport(String id);
+
+  Future<Either<Failure, List<Evidence>>> getPendingEvidence();
+
+  Future<Either<Failure, void>> markEvidenceAsSynced(String evidenceId, String remoteUrl);
 }

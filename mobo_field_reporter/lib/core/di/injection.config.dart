@@ -16,12 +16,15 @@ import 'package:injectable/injectable.dart' as _i526;
 
 import '../../features/reports/data/datasources/local/database_helper.dart'
     as _i605;
+import '../../features/reports/data/datasources/remote/minio_datasource.dart'
+    as _i570;
 import '../../features/reports/data/repositories/report_repository_impl.dart'
     as _i246;
 import '../../features/reports/domain/repositories/report_repository.dart'
     as _i939;
 import '../../features/reports/domain/usecases/create_report.dart' as _i926;
 import '../../features/reports/domain/usecases/get_reports.dart' as _i51;
+import '../../features/reports/domain/usecases/sync_pending_data.dart' as _i277;
 import '../../features/reports/domain/usecases/update_report.dart' as _i728;
 import '../../features/reports/presentation/bloc/report_bloc.dart' as _i652;
 import '../network/network_module.dart' as _i200;
@@ -39,14 +42,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i583.GoRouter>(() => routerModule.router);
     gh.lazySingleton<_i361.Dio>(() => networkModule.dio);
     gh.lazySingleton<_i605.DatabaseHelper>(() => _i605.DatabaseHelper());
+    gh.lazySingleton<_i570.MinioRemoteDataSource>(
+      () => _i570.MinioRemoteDataSourceImpl(gh<_i361.Dio>()),
+    );
     gh.lazySingleton<_i939.IReportRepository>(
-      () => _i246.ReportRepositoryImpl(gh<_i605.DatabaseHelper>()),
+      () => _i246.ReportRepositoryImpl(
+        gh<_i605.DatabaseHelper>(),
+        gh<_i570.MinioRemoteDataSource>(),
+      ),
     );
     gh.lazySingleton<_i926.CreateReport>(
       () => _i926.CreateReport(gh<_i939.IReportRepository>()),
     );
     gh.lazySingleton<_i51.GetReports>(
       () => _i51.GetReports(gh<_i939.IReportRepository>()),
+    );
+    gh.lazySingleton<_i277.SyncPendingData>(
+      () => _i277.SyncPendingData(gh<_i939.IReportRepository>()),
     );
     gh.lazySingleton<_i728.UpdateReport>(
       () => _i728.UpdateReport(gh<_i939.IReportRepository>()),
