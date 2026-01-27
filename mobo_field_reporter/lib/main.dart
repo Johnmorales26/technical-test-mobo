@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:mobo_field_reporter/core/di/injection.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await configureDependencies();
+
   runApp(const MyApp());
 }
 

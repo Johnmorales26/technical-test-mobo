@@ -1,0 +1,39 @@
+import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:injectable/injectable.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
+@module
+abstract class NetworkModule {
+  @lazySingleton
+    Dio get dio {
+      final String baseUrl = Platform.isAndroid
+          ? 'http://10.0.2.2:9000'
+          : 'http://localhost:9000';
+
+      final options = BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 10),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        }
+      );
+
+      final dio = Dio(options);
+
+      dio.interceptors.add(
+        PrettyDioLogger(requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: false,
+          error: true,
+          compact: true,
+          maxWidth: 90,
+        )
+      );
+
+      return dio;
+  }
+}
