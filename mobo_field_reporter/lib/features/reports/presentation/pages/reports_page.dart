@@ -13,31 +13,45 @@ class ReportsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => getIt<ReportBloc>()..add(LoadReports()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Reportes de campo'),
-          actions: [
-            IconButton(
-              onPressed: () => context.read<ReportBloc>().add(LoadReports()),
-              icon: const Icon(Icons.refresh),
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {
-            context.push('/create-report');
-          },
-          label: const Text('Nuevo Reporte'),
-          icon: const Icon(Icons.add_a_photo),
-        ),
-        body: const _ReportsView(),
-      ),
+      child: const ReportsView(),
     );
   }
 }
 
-class _ReportsView extends StatelessWidget {
-  const _ReportsView();
+class ReportsView extends StatelessWidget {
+  const ReportsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Reportes de Campo'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () => context.read<ReportBloc>().add(LoadReports()),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          final bool? shouldReload = await context.push<bool>('/create-report');
+          if (shouldReload == true) {
+            if (context.mounted) {
+              context.read<ReportBloc>().add(LoadReports());
+            }
+          }
+        },
+        label: const Text('Nuevo Reporte'),
+        icon: const Icon(Icons.add_a_photo),
+      ),
+      body: const _ReportsList(),
+    );
+  }
+}
+
+class _ReportsList extends StatelessWidget {
+  const _ReportsList();
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +60,8 @@ class _ReportsView extends StatelessWidget {
         if (state.status == ReportStatus.failure) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage ?? 'Error desconocido'),
-              backgroundColor: Colors.red,
+                content: Text(state.errorMessage ?? 'Error desconocido'),
+                backgroundColor: Colors.red
             ),
           );
         }
@@ -75,7 +89,6 @@ class _ReportsView extends StatelessWidget {
           itemBuilder: (context, index) {
             final report = state.reports[index];
             final hasEvidence = report.evidences.isNotEmpty;
-
             final isSynced = report.isSynchronized;
 
             return Card(
@@ -84,33 +97,23 @@ class _ReportsView extends StatelessWidget {
                 leading: Hero(
                   tag: 'report_${report.id}',
                   child: CircleAvatar(
-                    backgroundColor: isSynced
-                        ? Colors.green[100]
-                        : Colors.orange[100],
+                    backgroundColor: isSynced ? Colors.green[100] : Colors.orange[100],
                     child: Icon(
                       hasEvidence ? Icons.image : Icons.note,
                       color: isSynced ? Colors.green : Colors.orange,
                     ),
                   ),
                 ),
-                title: Text(
-                  report.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  report.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
+                title: Text(report.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(report.description, maxLines: 2, overflow: TextOverflow.ellipsis),
                 trailing: Tooltip(
                   message: isSynced ? 'Sincronizado' : 'Pendiente de subir',
                   child: Icon(
                     isSynced ? Icons.cloud_done : Icons.cloud_off,
                     color: isSynced ? Colors.green : Colors.grey,
                   ),
-                ),onTap: () {
-                  
-                },
+                ),
+                onTap: () {},
               ),
             );
           },

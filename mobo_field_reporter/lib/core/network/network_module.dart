@@ -8,8 +8,8 @@ abstract class NetworkModule {
   @lazySingleton
     Dio get dio {
       final String baseUrl = Platform.isAndroid
-          ? 'http://10.0.2.2:9000'
-          : 'http://localhost:9000';
+          ? 'http://192.168.3.97:9000'
+          : 'http://192.168.3.97:9000';
 
       final options = BaseOptions(
         baseUrl: baseUrl,

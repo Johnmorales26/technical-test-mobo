@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mobo_field_reporter/features/reports/presentation/pages/create_report_page.dart';
-import 'package:mobo_field_reporter/features/reports/presentation/reports_page.dart';
+import 'package:mobo_field_reporter/features/reports/presentation/pages/reports_page.dart';
 
 @module
 abstract class RouterModule {

@@ -72,7 +72,7 @@ class _CreateReportPageState extends State<CreateReportPage> {
              ScaffoldMessenger.of(context).showSnackBar(
                const SnackBar(content: Text('Reporte guardado localmente')),
              );
-             context.pop();
+             context.pop(true);
           }
         },
         child: Scaffold(
