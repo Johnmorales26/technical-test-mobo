@@ -15,6 +15,6 @@ abstract class IReportRepository {
 
   Future<Either<Failure, void>> updateReport(Report report);
 
-  
+
   Future<Either<Failure, void>> deleteReport(String id);
 }
