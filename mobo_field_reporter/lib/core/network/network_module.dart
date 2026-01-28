@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
@@ -7,14 +6,13 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 abstract class NetworkModule {
   @lazySingleton
     Dio get dio {
-      final String baseUrl = Platform.isAndroid
-          ? 'http://192.168.3.97:9000'
-          : 'http://192.168.3.97:9000';
+      final String baseUrl = 'http://192.168.3.97:9000';
 
       final options = BaseOptions(
         baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+        sendTimeout: const Duration(seconds: 60),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',

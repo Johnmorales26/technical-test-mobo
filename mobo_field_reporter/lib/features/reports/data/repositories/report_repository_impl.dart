@@ -122,15 +122,45 @@ class ReportRepositoryImpl implements IReportRepository {
   Future<Either<Failure, void>> markEvidenceAsSynced(String evidenceId, String remoteUrl) async {
     try {
       final db = await _dbHelper.database;
-      await db.update(
-        'evidences',
-        {
-          'status': 'synced',
-          'remote_url': remoteUrl,
-        },
-        where: 'id = ?',
-        whereArgs: [evidenceId],
-      );
+
+      await db.transaction((txn) async {
+        await txn.update(
+          'evidences',
+          {
+            'status': 'synced',
+            'remote_url': remoteUrl,
+          },
+          where: 'id = ?',
+          whereArgs: [evidenceId],
+        );
+
+        final evidenceResult = await txn.query(
+          'evidences',
+          columns: ['report_id'],
+          where: 'id = ?',
+          whereArgs: [evidenceId],
+        );
+
+        if (evidenceResult.isNotEmpty) {
+          final reportId = evidenceResult.first['report_id'] as String;
+
+          final pendingEvidences = await txn.query(
+            'evidences',
+            where: 'report_id = ? AND status != ?',
+            whereArgs: [reportId, 'synced'],
+          );
+
+          if (pendingEvidences.isEmpty) {
+            await txn.update(
+              'reports',
+              {'is_synchronized': 1},
+              where: 'id = ?',
+              whereArgs: [reportId],
+            );
+          }
+        }
+      });
+
       return const Right(null);
     } catch (e) {
       return Left(LocalFailure(e.toString()));
